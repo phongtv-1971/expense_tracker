@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTransactions } from '../../hooks/useTransactions'
 import { groupByMonth, sum } from '../../lib/date'
 import { exportTransactionsCSV } from '../../lib/csv'
+import ImportDialog from '../../components/ImportDialog'
 
 export default function DashboardPage() {
   const { transactions } = useTransactions()
@@ -17,6 +18,9 @@ export default function DashboardPage() {
       <h1 className="text-xl font-bold mb-4">Dashboard</h1>
       <div className="mb-4">
         <button onClick={() => exportTransactionsCSV(transactions)} className="px-3 py-2 bg-blue-600 text-white rounded">Export CSV</button>
+      </div>
+      <div className="mb-4">
+        <ImportDialog />
       </div>
       <div className="space-y-3">
         {Object.keys(groups)
