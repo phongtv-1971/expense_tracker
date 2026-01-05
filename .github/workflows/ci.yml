@@ -23,3 +23,7 @@ jobs:
         run: |
           cd web
           pnpm lint || npm run lint
+      - name: Unit tests
+        run: |
+          cd web
+          pnpm test || npm run test
