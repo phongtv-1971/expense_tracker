@@ -1,33 +1,90 @@
 "use client"
+import { useEffect, useMemo, useState } from 'react'
 import TransactionForm from '../../components/TransactionForm'
 import TransactionList from '../../components/TransactionList'
 import CategoryEditor from '../../components/CategoryEditor'
+import FilterBar from '../../components/FilterBar'
+import ExportButton from '../../components/ExportButton'
+import ImportDialog from '../../components/ImportDialog'
 import { useTransactions } from '../../hooks/useTransactions'
 import { useCategories } from '../../hooks/useCategories'
 
 export default function TransactionsPage() {
   const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactions()
+  const { categories } = useCategories()
+  const [hydrated, setHydrated] = useState(false)
+  const [query, setQuery] = useState('')
+
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
 
   function handleAdd(t: any) {
     addTransaction(t)
   }
 
+  const total = useMemo(() => transactions.reduce((s, t) => s + (t.type === 'expense' ? -t.amount : t.amount), 0), [transactions])
+
   return (
-    <main className="p-4 max-w-screen-md mx-auto">
-      <h1 className="text-xl font-bold mb-4">Transactions</h1>
-      <section className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <TransactionForm onSubmit={handleAdd} />
-          </div>
+    <main className="p-4 max-w-screen-lg mx-auto">
+      <div className="mb-6">
+        <div className="bg-white shadow-sm rounded-lg p-4 flex items-center justify-between gap-4">
           <div>
-            <CategoryEditor />
+            <h1 className="text-2xl font-semibold">Transactions</h1>
+            <p className="text-sm text-gray-500">Add, edit, and manage your personal expenses and income.</p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-gray-500">Balance</div>
+            <div className={`text-lg font-semibold ${total < 0 ? 'text-red-500' : 'text-green-600'}`}>
+              {hydrated ? total : '—'}
+            </div>
           </div>
         </div>
-      </section>
-      <section>
-        <TransactionList items={transactions} onDelete={deleteTransaction} onEdit={(t) => updateTransaction(t.id, t)} />
-      </section>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white shadow rounded-lg p-4">
+            <h2 className="text-lg font-medium mb-2">Add Transaction</h2>
+            <TransactionForm onSave={handleAdd} />
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-4">
+            <FilterBar query={query} onQuery={setQuery} />
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-4">
+            <h2 className="text-lg font-medium mb-2">All Transactions</h2>
+            <TransactionList items={transactions.filter(t => (
+              !query || (t.notes||'').toLowerCase().includes(query.toLowerCase()) || (t.category||'').toLowerCase().includes(query.toLowerCase())
+            ))} onDelete={deleteTransaction} onEdit={(t) => updateTransaction(t.id, t)} />
+          </div>
+        </div>
+
+        <aside className="space-y-6">
+          <div className="bg-white shadow rounded-lg p-4 sticky top-6">
+            <h3 className="text-md font-medium mb-2">Categories ({categories.length})</h3>
+            <CategoryEditor />
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-4">
+            <ExportButton transactions={transactions} />
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-4">
+            <ImportDialog />
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-md font-medium mb-2">Quick Stats</h3>
+            <ul className="text-sm text-gray-700 space-y-1">
+              <li>Total transactions: <strong>{transactions.length}</strong></li>
+              <li>Categories: <strong>{categories.length}</strong></li>
+              <li>Current balance: <strong className={total < 0 ? 'text-red-500' : 'text-green-600'}>{hydrated ? total : '—'}</strong></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </main>
   )
 }

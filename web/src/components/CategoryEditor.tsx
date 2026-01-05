@@ -16,9 +16,17 @@ export default function CategoryEditor() {
   return (
     <div className="p-3 border rounded">
       <h2 className="font-medium mb-2">Categories</h2>
-      <form onSubmit={handleAdd} className="flex gap-2 mb-3">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="New category" className="flex-1 p-2 border rounded" />
-        <button className="px-3 py-2 bg-blue-600 text-white rounded">Add</button>
+      <form onSubmit={handleAdd} className="mb-3 w-full">
+        <div className="w-full grid items-stretch" style={{ gridTemplateColumns: 'minmax(0,1fr) auto' }}>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="New category"
+            className="min-w-0 h-10 px-3 border border-gray-300 border-r-0 rounded-l-md focus:outline-none"
+            aria-label="New category"
+          />
+          <button type="submit" className="h-10 px-4 bg-blue-600 text-white border border-gray-300 rounded-r-md">Add</button>
+        </div>
       </form>
       <ul className="space-y-2">
         {categories.map((c) => (

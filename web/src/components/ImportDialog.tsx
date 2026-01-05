@@ -1,6 +1,6 @@
 "use client"
+import React, { useState } from 'react'
 import Papa from 'papaparse'
-import { useState } from 'react'
 import { Transaction } from '../types'
 import { useTransactions } from '../hooks/useTransactions'
 
@@ -26,9 +26,9 @@ export default function ImportDialog() {
     Papa.parse(f, {
       header: true,
       skipEmptyLines: true,
-      complete: (results) => {
+      complete: (results: Papa.ParseResult<any>) => {
         const rows = results.data as any[]
-        const incoming: Transaction[] = rows.map((r) => ({ id: r.id || '', date: r.date, amount: Number(r.amount), type: r.type, category: r.category, notes: r.notes }))
+        const incoming: Transaction[] = rows.map((r) => ({ id: r.id || '', date: r.date, amount: Number(r.amount), type: r.type || 'expense', category: r.category || '', notes: r.notes || '' }))
         setPreview(incoming)
       }
     })

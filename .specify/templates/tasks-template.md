@@ -52,6 +52,10 @@ description: "Task list template for feature implementation"
 - [ ] T002 Initialize [language] project with [framework] dependencies
 - [ ] T003 [P] Configure linting and formatting tools
 
+**Constitution Alignment**: All setup and foundational tasks MUST reference the constitution
+and include small acceptance checks where applicable (e.g., storage choices, CSV export format,
+responsiveness checklist). Tasks that do not include these checks should be flagged in PR descriptions.
+
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)

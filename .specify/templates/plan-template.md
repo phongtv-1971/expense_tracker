@@ -31,7 +31,16 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Plans MUST include a short `Constitution Check` section that explicitly verifies how the plan
+meets the project's constitution. At minimum the check MUST confirm:
+
+- Data ownership & privacy: plan indicates storage choice (client-only vs. server) and any opt-in flows.
+- Transaction model: plan lists the Transaction fields and Category model used.
+- Dashboard coverage: plan specifies Day/Week/Month view support and timezone handling.
+- Export & Import: plan describes CSV export format and import sanitation steps.
+- Responsiveness & Accessibility: plan notes responsive layout approach and a11y checks.
+
+Failure to include a completed Constitution Check is a blocking review item for Phase 0.
 
 ## Project Structure
 

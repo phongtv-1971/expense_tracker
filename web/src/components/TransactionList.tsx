@@ -8,7 +8,7 @@ type Props = {
 }
 
 export default function TransactionList({ items, onEdit, onDelete }: Props) {
-  if (!items.length) return <div>No transactions yet.</div>
+  if (!items || items.length === 0) return <div className="p-4 text-sm text-gray-600">No transactions</div>
 
   return (
     <ul className="space-y-2">

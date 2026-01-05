@@ -151,16 +151,13 @@ Acceptance Scenarios:
 - Default storage is browser localStorage; IndexedDB can be used if needed for performance.
 - Currency formatting and locale are driven by `UserSettings` with reasonable defaults (user's browser locale).
 
-## Open Questions / NEEDS CLARIFICATION (limit 3)
+## Clarifications Applied
 
-1. [NEEDS CLARIFICATION] Import duplicate handling: Should the importer attempt deduplication (by id+date+amount) or always append?  
-   Suggested default: append and warn about duplicates; offer dedupe as a future enhancement.
+1. Import duplicate handling: The importer will **deduplicate heuristically** by comparing `date`, `amount`, and `notes` (where present) and ignoring rows that match an existing Transaction. Any skipped rows will be reported to the user after import with a summary.
 
-2. [NEEDS CLARIFICATION] Date/time zones: Use the browser local timezone for display and storage (default), or store UTC and convert?  
-   Suggested default: store ISO local date-only with timezone awareness for display; store timestamps in ISO-8601.
+2. Date/time zones: The app will **store and display local ISO dates by default** (date-only for Transactions). Timestamps are stored in ISO-8601 and displayed in the user's browser local timezone; for transaction-level reporting we treat dates as the user-visible local date.
 
-3. [NEEDS CLARIFICATION] Category colors: Should color be mandatory for categories or optional?  
-   Suggested default: optional, used only for visualization on the dashboard.
+3. Category colors: Category `color` is **optional** and used only for visualization. The UI will auto-assign a palette color when a new category is created but allow users to change or remove it.
 
 ## Acceptance Test Examples
 

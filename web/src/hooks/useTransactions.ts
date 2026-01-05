@@ -4,19 +4,29 @@ import storage from '../lib/storage'
 import { v4 as uuidv4 } from 'uuid'
 
 export function useTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+
+  // Load saved transactions on client mount only to avoid SSR hydration mismatches
+  useEffect(() => {
     try {
       const s = storage.getAll()
-      return s.transactions || []
+      if (s?.transactions && s.transactions.length) {
+        setTransactions(s.transactions as Transaction[])
+      }
     } catch (e) {
-      return []
+      // ignore
     }
-  })
+  }, [])
 
+  // Persist transactions to storage when they change (client-side)
   useEffect(() => {
-    const s = storage.getAll()
-    s.transactions = transactions
-    storage.setAll(s)
+    try {
+      const s = storage.getAll()
+      s.transactions = transactions
+      storage.setAll(s)
+    } catch (e) {
+      // ignore
+    }
   }, [transactions])
 
   function addTransaction(t: Omit<Transaction, 'id'>) {
