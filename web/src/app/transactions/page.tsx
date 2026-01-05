@@ -2,18 +2,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import TransactionForm from '../../components/TransactionForm'
 import TransactionList from '../../components/TransactionList'
+import EditTransactionDialog from '../../components/EditTransactionDialog'
 import CategoryEditor from '../../components/CategoryEditor'
 import FilterBar from '../../components/FilterBar'
 import ExportButton from '../../components/ExportButton'
 import ImportDialog from '../../components/ImportDialog'
 import { useTransactions } from '../../hooks/useTransactions'
 import { useCategories } from '../../hooks/useCategories'
+import { formatVND } from '../../lib/currency'
+import { Transaction } from '../../types'
 
 export default function TransactionsPage() {
   const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactions()
   const { categories } = useCategories()
   const [hydrated, setHydrated] = useState(false)
   const [query, setQuery] = useState('')
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
 
   useEffect(() => {
     setHydrated(true)
@@ -21,6 +25,15 @@ export default function TransactionsPage() {
 
   function handleAdd(t: any) {
     addTransaction(t)
+  }
+
+  function handleEdit(t: Transaction) {
+    setEditingTransaction(t)
+  }
+
+  function handleUpdate(id: string, updated: Omit<Transaction, 'id'>) {
+    updateTransaction(id, updated)
+    setEditingTransaction(null)
   }
 
   const total = useMemo(() => transactions.reduce((s, t) => s + (t.type === 'expense' ? -t.amount : t.amount), 0), [transactions])
@@ -36,7 +49,7 @@ export default function TransactionsPage() {
           <div className="text-right">
             <div className="text-sm text-gray-500">Balance</div>
             <div className={`text-lg font-semibold ${total < 0 ? 'text-red-500' : 'text-green-600'}`}>
-              {hydrated ? total : '—'}
+              {hydrated ? formatVND(total) : '—'}
             </div>
           </div>
         </div>
@@ -57,7 +70,7 @@ export default function TransactionsPage() {
             <h2 className="text-lg font-medium mb-2">All Transactions</h2>
             <TransactionList items={transactions.filter(t => (
               !query || (t.notes||'').toLowerCase().includes(query.toLowerCase()) || (t.category||'').toLowerCase().includes(query.toLowerCase())
-            ))} onDelete={deleteTransaction} onEdit={(t) => updateTransaction(t.id, t)} />
+            ))} onDelete={deleteTransaction} onEdit={handleEdit} />
           </div>
         </div>
 
@@ -80,11 +93,19 @@ export default function TransactionsPage() {
             <ul className="text-sm text-gray-700 space-y-1">
               <li>Total transactions: <strong>{transactions.length}</strong></li>
               <li>Categories: <strong>{categories.length}</strong></li>
-              <li>Current balance: <strong className={total < 0 ? 'text-red-500' : 'text-green-600'}>{hydrated ? total : '—'}</strong></li>
+              <li>Current balance: <strong className={total < 0 ? 'text-red-500' : 'text-green-600'}>{hydrated ? formatVND(total) : '—'}</strong></li>
             </ul>
           </div>
         </aside>
       </div>
+
+      {editingTransaction && (
+        <EditTransactionDialog 
+          transaction={editingTransaction}
+          onSave={handleUpdate}
+          onCancel={() => setEditingTransaction(null)}
+        />
+      )}
     </main>
   )
 }

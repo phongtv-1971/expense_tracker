@@ -31,9 +31,12 @@ export default function CategoryEditor() {
       <ul className="space-y-2">
         {categories.map((c) => (
           <li key={c.id} className="flex justify-between items-center">
-            <div>{c.name}</div>
+            <div className="flex items-center gap-2">
+              {c.color && <div className="w-3 h-3 rounded-full" style={{ backgroundColor: c.color }} />}
+              <span>{c.name}</span>
+            </div>
             <div>
-              <button onClick={() => deleteCategory(c.id)} className="px-2 py-1 bg-red-400 rounded">Delete</button>
+              <button onClick={() => deleteCategory(c.id)} className="px-2 py-1 text-xs bg-red-400 text-white rounded hover:bg-red-500">Delete</button>
             </div>
           </li>
         ))}

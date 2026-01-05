@@ -39,10 +39,14 @@ export default function TransactionForm({ initial = {}, onSave, onCancel }: Prop
       notes,
     }
     onSave(payload)
-    // reset form for new entry
-    setAmount('')
-    setCategory('')
-    setNotes('')
+    
+    // Only reset form if it's a new transaction (no initial data)
+    if (!initial || !initial.id) {
+      setAmount('')
+      setCategory('')
+      setNotes('')
+      setDate(new Date().toISOString().slice(0, 10))
+    }
   }
 
   return (
